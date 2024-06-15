@@ -1,6 +1,6 @@
 package ingSw_servlets;
 
-import java.io.IOException;
+import java.io.IOException; 
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 import ingSw_beans.Dipendente;
+import ingSw_beans.ScanItDB;
 import ingSw_beans.SessionMap;
 import ingSw_beans.UserDb;
 
@@ -39,6 +40,13 @@ public class ChangePWServlet extends HttpServlet {
 			userDb = new UserDb();
 			this.getServletContext().setAttribute("userDb", userDb);
 		}
+		
+		ScanItDB db = (ScanItDB) this.getServletContext().getAttribute("db");
+		if(db == null)
+		{
+			db = new ScanItDB();
+			this.getServletContext().setAttribute("db", db);
+		}
 	}
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -53,28 +61,30 @@ public class ChangePWServlet extends HttpServlet {
 		String nuovaPassword = req.getParameter("nuovapassword");
 		String confermaNuovaPassword = req.getParameter("confermanuovapassword");
 		//System.out.println("USER: "+username+"\nNP: "+nuovaPassword+"\nCNP: "+confermaNuovaPassword);
-		Dipendente d = userDb.getDipendenteFromUsername(username);
+		//Dipendente d = userDb.getDipendenteFromUsername(username);
+		boolean check = userDb.isInDB(username);
 		
-		this.getServletContext().setAttribute("np", nuovaPassword);
-		this.getServletContext().setAttribute("d", d);
-		
-		if(d != null && nuovaPassword.equals(confermaNuovaPassword)) {
-			
+		if(check && nuovaPassword.equals(confermaNuovaPassword)) {
+			this.getServletContext().setAttribute("np", nuovaPassword);
+			this.getServletContext().setAttribute("u", username);
             res.sendRedirect("changepw.html?OTP=true");
+
 		}else {
 			res.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Imposta lo stato della risposta a 401 (Non autorizzato)
 			out.print("Impossibile cambiare password!");
 			out.flush();
-			out.close();		
+			out.close();
 		}
-		
+	
 	}
 	
 	public void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
 		Gson gson = (Gson) this.getServletContext().getAttribute("gson");
-		SessionMap sessionMap = (SessionMap) this.getServletContext().getAttribute("sessionMap");
-		UserDb userDb = (UserDb) this.getServletContext().getAttribute("userDb");
+		ScanItDB db = (ScanItDB) this.getServletContext().getAttribute("db");
+
+		//SessionMap sessionMap = (SessionMap) this.getServletContext().getAttribute("sessionMap");
+		//UserDb userDb = (UserDb) this.getServletContext().getAttribute("userDb");
 		PrintWriter out = res.getWriter();
 		res.setContentType("text/plain");
 		res.setCharacterEncoding("UTF-8");
@@ -84,9 +94,9 @@ public class ChangePWServlet extends HttpServlet {
 		//...
 		
 		String nuovaPassword = (String) this.getServletContext().getAttribute("np");
-		Dipendente d = (Dipendente) this.getServletContext().getAttribute("d");
+		String username = (String) this.getServletContext().getAttribute("u");
 		
-		boolean check = userDb.changePW(d, nuovaPassword);
+		boolean check = db.cambiaPassword(username, nuovaPassword);
 		if(check) {
 			out.print("OK!");
 			out.flush();
@@ -98,4 +108,5 @@ public class ChangePWServlet extends HttpServlet {
 			out.close();
 		}
 	}
+
 }

@@ -158,4 +158,18 @@ public class UserDb implements Serializable {
         }
         return true;
     }
+	
+	public boolean isInDB(String username) {
+		for (Dipendente d : getDipendenti()) {
+			if(d.getUsername().equals(username)) {
+				return true;
+			}
+		}
+		for(Amministratore a : getAmministratori()) {
+			if(a.getUsername().equals(username)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

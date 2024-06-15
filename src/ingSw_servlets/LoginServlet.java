@@ -62,7 +62,7 @@ public class LoginServlet extends HttpServlet {
 			}
 			startSessionTimeoutAmministratore(timer, session, 30 * 60 * 1000, sessionMap, a);
 			this.getServletContext().setAttribute("sessionMap", sessionMap);
-			res.sendRedirect("admin.jsp"); // Pagina per l'admin
+			res.sendRedirect("admin_pages/admin.jsp"); // Pagina per l'admin
 			
 			
 		}else if(attore.equals(Attore.DIPENDENTE)) {
