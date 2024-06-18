@@ -7,10 +7,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
-import ingSw_beans.Dipendente;
 import ingSw_beans.ScanItDB;
 import ingSw_beans.SessionMap;
-import ingSw_beans.UserDb;
 
 public class ChangePWServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -34,12 +32,6 @@ public class ChangePWServlet extends HttpServlet {
 			this.getServletContext().setAttribute("sessionMap", sessionMap);
 		}
 		
-		UserDb userDb = (UserDb) this.getServletContext().getAttribute("userDb");
-		if(userDb == null)
-		{
-			userDb = new UserDb();
-			this.getServletContext().setAttribute("userDb", userDb);
-		}
 		
 		ScanItDB db = (ScanItDB) this.getServletContext().getAttribute("db");
 		if(db == null)
@@ -52,17 +44,17 @@ public class ChangePWServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
 		
-		UserDb userDb = (UserDb) this.getServletContext().getAttribute("userDb");
 		
 		PrintWriter out = res.getWriter();
 		res.setContentType("text/plain");
 		res.setCharacterEncoding("UTF-8");
+		ScanItDB db = (ScanItDB) this.getServletContext().getAttribute("db");
 		String username = req.getParameter("username");
 		String nuovaPassword = req.getParameter("nuovapassword");
 		String confermaNuovaPassword = req.getParameter("confermanuovapassword");
 		//System.out.println("USER: "+username+"\nNP: "+nuovaPassword+"\nCNP: "+confermaNuovaPassword);
 		//Dipendente d = userDb.getDipendenteFromUsername(username);
-		boolean check = userDb.isInDB(username);
+		boolean check = db.isInDB(username);
 		
 		if(check && nuovaPassword.equals(confermaNuovaPassword)) {
 			this.getServletContext().setAttribute("np", nuovaPassword);

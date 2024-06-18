@@ -30,6 +30,24 @@
         <url-pattern>/LoginServlet</url-pattern>
     </servlet-mapping>
     
+     <servlet>
+        <servlet-name>LicenziaServlet</servlet-name>
+        <servlet-class>ingSw_servlets.LicenziaServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LicenziaServlet</servlet-name>
+        <url-pattern>/LicenziaServlet</url-pattern>
+    </servlet-mapping>
+    
+     <servlet>
+        <servlet-name>RegistraServlet</servlet-name>
+        <servlet-class>ingSw_servlets.RegistraServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegistraServlet</servlet-name>
+        <url-pattern>/RegistraServlet</url-pattern>
+    </servlet-mapping>
+    
     <servlet>
         <servlet-name>ChangePWServlet</servlet-name>
         <servlet-class>ingSw_servlets.ChangePWServlet</servlet-class>
