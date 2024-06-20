@@ -1,7 +1,7 @@
 <%@ page import="ingSw_beans.SessionMap"%>
-<%@ page import="ingSw_beans.UserDb"%>
 <%@ page import="ingSw_beans.Dipendente"%>
 <%@ page import="ingSw_beans.ScanItDB"%>
+<%@ page contentType="text/html; charset=UTF-8" %>
 
 <!DOCTYPE html>
 <html>
@@ -46,10 +46,14 @@ if(db == null)
 }
 
 SessionMap sessionMap = (SessionMap) this.getServletContext().getAttribute("sessionMap");
-if(sessionMap == null) {
-    sessionMap = new SessionMap();
-    this.getServletContext().setAttribute("sessionMap", sessionMap);
-}
+
+HttpSession s = request.getSession(false); // Recupero session	
+
+if(sessionMap == null){
+	response.sendRedirect("../login.html"); 
+}else if (!sessionMap.getASessions().containsKey(s) || s == null){
+	response.sendRedirect("../login.html");
+}	
 
 // Contatore per gli indici dei dipendenti
 int index = 0;
@@ -157,6 +161,9 @@ int index = 0;
 	               			<div id="error-message" class="hidden text-red-600">
             					Attenzione, alcuni valori non sono corretti!
         					</div>
+        					<div id="error" class="hidden text-red-600">
+            					Registrazione fallita!
+        					</div>
                		</form>
                		
                <button class='px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-blue-400 dark:hover:bg-blue-500 dark:focus:ring-offset-gray-800' onclick='cambiaSchermata(this)'>Assumi</button>
@@ -165,5 +172,18 @@ int index = 0;
    </div>
 
    <script src="../scripts/admin.js"></script>
+   <script>
+   window.onload = function() {
+	    const params = getQueryParams();
+	    const error = document.getElementById('error');
+
+	    if (params['registrazione'] === 'false') {
+	    	error.classList.remove('hidden');
+	    }else{
+	    	error.classList.add('hidden');
+	    }
+	    
+	};
+   </script>
 </body>
 </html>

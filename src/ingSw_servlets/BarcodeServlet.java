@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -19,6 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import ingSw_beans.Dipendente;
+import ingSw_beans.ScanItDB;
 import ingSw_beans.Scansione;
 import ingSw_beans.SessionMap;
 
@@ -35,11 +37,19 @@ public class BarcodeServlet extends HttpServlet {
 			gson = new Gson();
 			this.getServletContext().setAttribute("gson", gson);
 		}
+		
 		SessionMap sessionMap = (SessionMap) this.getServletContext().getAttribute("sessionMap");
 		if(sessionMap == null)
 		{
 			sessionMap = new SessionMap();
 			this.getServletContext().setAttribute("sessionMap", sessionMap);
+		}
+		
+		ScanItDB db = (ScanItDB) this.getServletContext().getAttribute("db");
+		if(db == null)
+		{
+			db = new ScanItDB();
+			this.getServletContext().setAttribute("db", db);
 		}
 	}
 	
@@ -47,13 +57,14 @@ public class BarcodeServlet extends HttpServlet {
 
 		Gson gson = (Gson) this.getServletContext().getAttribute("gson");
 		SessionMap sessionMap = (SessionMap) this.getServletContext().getAttribute("sessionMap");
+		ScanItDB db = (ScanItDB) this.getServletContext().getAttribute("db");
 		Timer timer = (Timer) this.getServletContext().getAttribute("timer");
 		
 		Scansione scansione = gson.fromJson(req.getReader().readLine(), Scansione.class);
 		DateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.mmm'Z'");
-		//System.out.println("TIMESTAMP: "+f.format(scansione.getTimestamp())+"\nQUANTITA: "+scansione.getQuantita()+"\nUSERNAME: "+scansione.getUsername()+"\nID: "+scansione.getIdProdotto());
-		File scansioniDb = new File("C:\\Users\\aleor\\eclipse-workspace\\IngSW\\ScanIt\\web\\DBs\\ScansioniDb.txt");
-		
+		Date date = new Date(scansione.getTimestamp());
+        String formattedTimestamp = f.format(date);
+        
 		PrintWriter out = res.getWriter();
 		res.setContentType("text/plain");
 		res.setCharacterEncoding("UTF-8");
@@ -74,23 +85,24 @@ public class BarcodeServlet extends HttpServlet {
             this.getServletContext().setAttribute("timer", timer);
             Dipendente dipendente = sessionMap.getDSessions().get(session);
 			startSessionTimeoutDipendente(timer, session, 30 * 60 * 1000, sessionMap, dipendente);
-			
+			boolean checkScan = false;
+			boolean checkDec = false;
 			synchronized (this) {
-	            try (FileWriter fileWriter = new FileWriter(scansioniDb, true)) {
-	            	JsonObject obj = new JsonObject();
-	            	obj.addProperty("username", scansione.getUsername());
-	            	obj.addProperty("idProdotto", scansione.getIdProdotto());
-	            	obj.addProperty("quantita", scansione.getQuantita());
-	            	obj.addProperty("timestamp", f.format(scansione.getTimestamp()));
-	            	//System.out.println(obj);
-	                fileWriter.write(gson.toJson(obj) + "\n");
-	            } catch (IOException e) {
-	                e.printStackTrace();
-	            }
+	            checkScan = db.aggiungiScansione(dipendente.getUsername(), scansione.getIdProdotto(), String.valueOf(scansione.getQuantita()), formattedTimestamp);
+	            checkDec = db.decrementaQuantita(scansione.getIdProdotto(), scansione.getQuantita());
 	        }
-			out.print("ID: "+scansione.getIdProdotto()+"\nQuantità: "+ scansione.getQuantita()+"\nTimestamp: "+scansione.getTimestamp()+ "\nUsername: " + scansione.getUsername()+"\n\n");
-			out.flush();
-			out.close();
+			
+			if(checkScan && checkDec) {
+				out.print("ID: "+scansione.getIdProdotto()+"\nQuantità: "+ scansione.getQuantita()+"\nTimestamp: "+scansione.getTimestamp()+ "\nUsername: " + scansione.getUsername()+"\n\n");
+				out.flush();
+				out.close();
+			}else {
+				res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // Imposta lo stato della risposta a 500
+				out.print("Fallimento nell'aggiunta al Database!");
+				out.flush();
+				out.close();
+			}
+			
 		}
 		
 	}

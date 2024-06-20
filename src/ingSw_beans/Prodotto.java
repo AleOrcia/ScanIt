@@ -1,5 +1,8 @@
 package ingSw_beans;
 
+import java.text.NumberFormat;
+import java.util.Locale;
+
 public class Prodotto {
 	private String id;
 	private String nome;
@@ -7,6 +10,7 @@ public class Prodotto {
 	private double prezzo;
 	private int quantita;
 	private String idFornitore;
+    NumberFormat formatoEuro;
 	
 	
 	public Prodotto(String id, String nome, String descrizione, double prezzo, int quantita, String idFornitore) {
@@ -17,6 +21,7 @@ public class Prodotto {
 		this.prezzo = prezzo;
 		this.quantita = quantita;
 		this.idFornitore = idFornitore;
+		this.formatoEuro = NumberFormat.getCurrencyInstance(Locale.ITALY);
 	}
 
 
@@ -50,8 +55,8 @@ public class Prodotto {
 	}
 
 
-	public double getPrezzo() {
-		return prezzo;
+	public String getPrezzo() {
+		return this.formatoEuro.format(prezzo);
 	}
 
 

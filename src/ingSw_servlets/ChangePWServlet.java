@@ -52,8 +52,7 @@ public class ChangePWServlet extends HttpServlet {
 		String username = req.getParameter("username");
 		String nuovaPassword = req.getParameter("nuovapassword");
 		String confermaNuovaPassword = req.getParameter("confermanuovapassword");
-		//System.out.println("USER: "+username+"\nNP: "+nuovaPassword+"\nCNP: "+confermaNuovaPassword);
-		//Dipendente d = userDb.getDipendenteFromUsername(username);
+
 		boolean check = db.isInDB(username);
 		
 		if(check && nuovaPassword.equals(confermaNuovaPassword)) {
@@ -74,9 +73,6 @@ public class ChangePWServlet extends HttpServlet {
 
 		Gson gson = (Gson) this.getServletContext().getAttribute("gson");
 		ScanItDB db = (ScanItDB) this.getServletContext().getAttribute("db");
-
-		//SessionMap sessionMap = (SessionMap) this.getServletContext().getAttribute("sessionMap");
-		//UserDb userDb = (UserDb) this.getServletContext().getAttribute("userDb");
 		PrintWriter out = res.getWriter();
 		res.setContentType("text/plain");
 		res.setCharacterEncoding("UTF-8");

@@ -53,12 +53,10 @@ public class LoginServlet extends HttpServlet {
 		Timer timer = (Timer) this.getServletContext().getAttribute("timer");
 		String username = req.getParameter("username");
 		String pw = req.getParameter("password");
-		
 		Attore attore = db.access(username, pw);
-					
 		if (attore.equals(Attore.AMMINISTRATORE)) {			
 			
-		    Amministratore a = db.getAmministratoreFromUsername(username); // Recupero specifico user		
+		    Amministratore a = db.getAmministratoreFromUsername(username);
 			if(!sessionMap.getASessions().containsKey(session)) {
 				sessionMap.getASessions().put(session, a); 
 			}
@@ -71,7 +69,7 @@ public class LoginServlet extends HttpServlet {
 			
 			Dipendente d = db.getDipendenteFromUsername(username);
 			if(!sessionMap.getDSessions().containsKey(session)) {
-				sessionMap.getDSessions().put(session, d); // Se non è presente inizializzo un nuovo counter a 1
+				sessionMap.getDSessions().put(session, d); 
 			}
 			startSessionTimeoutDipendente(timer, session, 30 * 60 * 1000, sessionMap, d);
 			this.getServletContext().setAttribute("sessionMap", sessionMap);

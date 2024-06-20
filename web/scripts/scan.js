@@ -54,9 +54,9 @@ function sendDataToServer(barcode, quantity) {
     .then(response => {
         if (!response.ok) {
             if (response.status === 401) {
-                throw new Error("Scansione effettuata ma sessione scaduta, rieffettuare il login!");
-            } else {
-                throw new Error("Errore nella richiesta: " + response.status);
+                throw new Error("Scansione NON effettuata. Sessione scaduta, rieffettuare il login!");
+            } else if (response.status === 500){
+                throw new Error("Non ci sono sufficienti prodotti nell'inventario!: " + response.status);
             }
         }
         return response.text();

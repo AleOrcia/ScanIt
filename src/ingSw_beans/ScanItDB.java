@@ -37,6 +37,8 @@ public class ScanItDB implements IScanItDB{
         }
     }
 
+    
+    //SEZIONE PERSONALE
 
     public boolean registraDipendente(String username, String password, String nome, String cognome, String dataNascita, String telefono, String indirizzo, String documento) {
         String insertSQL = "INSERT INTO utenti (username, password, nome, cognome, data_nascita, telefono, indirizzo, documento) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -173,60 +175,11 @@ public class ScanItDB implements IScanItDB{
             statement.setString(1, username);
             ResultSet result = statement.executeQuery();
             pwd = (String) result.getObject(1);
-            //System.out.println("Password: " + pwd);
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return pwd;
     }
-    
-    public List<Prodotto> listaProdotti(){
-    	List<Prodotto> prodotti = new ArrayList<Prodotto>();
-    	String selectSQL = "SELECT * FROM prodotti";
-        try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(selectSQL)) {
-            while (resultSet.next()) {
-            	Prodotto p = new Prodotto(resultSet.getString("idProdotto"), resultSet.getString("nome"),
-            			resultSet.getString("descrizione"), resultSet.getDouble("prezzo"), 
-            			resultSet.getInt("quantità"), resultSet.getString("idFornitore"));
-            	prodotti.add(p);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return prodotti;
-    }
-    
-    private Prodotto getProdotto(String id) {
-    	for (Prodotto p : listaProdotti()) {
-    		if (p.getId().equals(id))
-    			return p;
-    	}
-    	return null;
-    }
-    
-    public List<Ordine> listaOrdini(){
-    	List<Ordine> ordini = new ArrayList<Ordine>();
-    	String selectSQL = "SELECT * FROM ordini";
-        try (Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(selectSQL)) {
-            while (resultSet.next()) {
-            	String idProdotti[] = resultSet.getString("prodotti").split(",");
-            	List<Prodotto> prodotti = new ArrayList<Prodotto>();
-            	for (String id : idProdotti) {
-            		if (getProdotto(id) != null) {
-                		prodotti.add(getProdotto(id));
-                	}
-            	}
-            	
-            	ordini.add(new Ordine(resultSet.getString("id"), prodotti));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return ordini;
-    }
-    
     
 	public List<Dipendente> getDipendenti() {
 		List<Dipendente> dipendenti = new ArrayList<Dipendente>();
@@ -295,5 +248,143 @@ public class ScanItDB implements IScanItDB{
 			}
 		}
 		return false;
-	}
+	}    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+//SEZIONE PRODOTTI
+    
+    public List<Prodotto> listaProdotti(){
+    	List<Prodotto> prodotti = new ArrayList<Prodotto>();
+    	String selectSQL = "SELECT * FROM prodotti";
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(selectSQL)) {
+            while (resultSet.next()) {
+            	Prodotto p = new Prodotto(resultSet.getString("id"), resultSet.getString("nome"),
+            			resultSet.getString("descrizione"), resultSet.getDouble("prezzo"), 
+            			resultSet.getInt("quantita"), resultSet.getString("idFornitore"));
+            	prodotti.add(p);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return prodotti;
+    }
+    
+    private Prodotto getProdotto(String id) {
+    	for (Prodotto p : listaProdotti()) {
+    		if (p.getId().equals(id))
+    			return p;
+    	}
+    	return null;
+    }
+    
+    public boolean aggiungiScansione(String username, String idProdotto, String quantita, String timestamp) {
+        String sql = "INSERT INTO scansioni(username, id_prodotto, quantita, timestamp) VALUES(?, ?, ?, ?)";
+
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        	statement.setString(1, username);
+        	statement.setString(2, idProdotto);
+        	statement.setString(3, quantita);
+        	statement.setString(4, timestamp);
+        	statement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+    
+    public boolean decrementaQuantita(String idProdotto, int decremento) {
+        String selectSql = "SELECT quantita FROM prodotti WHERE id = ?";
+        String updateSql = "UPDATE prodotti SET quantita = quantita - ? WHERE id = ?";
+
+        try (
+             PreparedStatement selectStmt = connection.prepareStatement(selectSql);
+             PreparedStatement updateStmt = connection.prepareStatement(updateSql)) {
+
+            // Verifica la quantità attuale
+            selectStmt.setString(1, idProdotto);
+            ResultSet rs = selectStmt.executeQuery();
+
+            if (rs.next()) {
+                int quantitaAttuale = rs.getInt("quantita");
+
+                // Controlla se la quantità è sufficiente
+                if (quantitaAttuale >= decremento) {
+                    // Aggiorna la quantità
+                    updateStmt.setInt(1, decremento);
+                    updateStmt.setString(2, idProdotto);
+                    updateStmt.executeUpdate();
+                    return true;
+                } else {
+                    System.out.println("Errore: Quantità insufficiente per decrementare.");
+                    return false;
+                }
+            } else {
+                System.out.println("Errore: Prodotto non trovato.");
+                return false;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }
+    
+    
+    
+//SEZIONE ORDINI
+    public List<Ordine> listaOrdini(){
+    	List<Ordine> ordini = new ArrayList<Ordine>();
+    	String selectSQL = "SELECT * FROM ordini";
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(selectSQL)) {
+            while (resultSet.next()) {
+            	String idProdotti[] = resultSet.getString("prodotti").split(",");
+            	List<Prodotto> prodotti = new ArrayList<Prodotto>();
+            	for (String id : idProdotti) {
+            		if (getProdotto(id) != null) {
+                		prodotti.add(getProdotto(id));
+                	}
+            	}
+            	
+            	ordini.add(new Ordine(resultSet.getString("id"), prodotti));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ordini;
+    }
+    
+    
+    public List<Fornitore> listaFornitori(){
+    	List<Fornitore> fornitori = new ArrayList<Fornitore>();
+    	String selectSQL = "SELECT * FROM fornitori";
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(selectSQL)) {
+        	
+            while (resultSet.next()) {
+            	String id = resultSet.getString("id");
+            	String idFornitore = resultSet.getString("idFornitore");
+            	double costo = resultSet.getDouble("costo");
+            	fornitori.add(new Fornitore(id, idFornitore, costo));
+            }
+            	
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return fornitori;
+    }
+    
+
 }

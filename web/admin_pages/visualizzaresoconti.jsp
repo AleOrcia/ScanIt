@@ -1,6 +1,7 @@
 <%@ page import="ingSw_beans.SessionMap"%>
+<%@ page contentType="text/html; charset=UTF-8" %>
 
-
+<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
@@ -17,6 +18,20 @@
 <script src="../scripts/admin.js"></script>
 
 </head>
+
+<%
+	SessionMap sessionMap = (SessionMap) this.getServletContext().getAttribute("sessionMap");
+	
+	HttpSession s = request.getSession(false); // Recupero session	
+	
+	if(sessionMap == null){
+		response.sendRedirect("../login.html"); 
+	}else if (!sessionMap.getASessions().containsKey(s) || s == null){
+		response.sendRedirect("../login.html");
+	}	
+	
+%>
+
 <body class="bg-white dark:bg-gray-900">
    <div class="container">
        <div class="left-column mt-4">

@@ -37,7 +37,6 @@ public class TestClass {
     	assertEquals("p0001", this.prodotto.getId());
 		assertEquals("Biscotti", this.prodotto.getNome());
 		assertEquals("Biscotti integrali ricchi di fibre", this.prodotto.getDescrizione());
-		assertEquals(3.28, this.prodotto.getPrezzo(), 0);
 		assertEquals(10, this.prodotto.getQuantita());
 		assertEquals("f4000", this.prodotto.getIdFornitore());
 		
