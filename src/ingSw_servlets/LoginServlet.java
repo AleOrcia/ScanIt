@@ -1,8 +1,6 @@
 package ingSw_servlets;
 
 import java.io.IOException;
-import java.time.LocalDate;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -11,8 +9,10 @@ import javax.servlet.http.HttpSession;
 import ingSw_beans.Amministratore;
 import ingSw_beans.Attore;
 import ingSw_beans.Dipendente;
+import ingSw_beans.FineGiornata;
 import ingSw_beans.ScanItDB;
 import ingSw_beans.SessionMap;
+import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -41,6 +41,24 @@ public class LoginServlet extends HttpServlet {
 			db = new ScanItDB();
 			this.getServletContext().setAttribute("db", db);
 		}
+		
+		//Evento FineGiornata
+        Timer fineGiornata = new Timer();
+        Calendar giorno = Calendar.getInstance();
+        giorno.set(
+          Calendar.DAY_OF_WEEK,
+          Calendar.SUNDAY
+        );
+        giorno.set(Calendar.HOUR, 0);
+        giorno.set(Calendar.MINUTE, 0);
+        giorno.set(Calendar.SECOND, 0);
+        giorno.set(Calendar.MILLISECOND, 0);
+        // Ogni mezzanotte
+        fineGiornata.schedule(
+          new FineGiornata(),
+          giorno.getTime(),
+          1000 * 60 * 60 * 24 * 7
+        );
 	}
 	
 	public void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {

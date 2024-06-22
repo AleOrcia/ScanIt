@@ -8,15 +8,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import com.google.gson.Gson;
-
 import ingSw_beans.Dipendente;
 import ingSw_beans.ScanItDB;
 import ingSw_beans.Scansione;
@@ -49,6 +46,7 @@ public class BarcodeServlet extends HttpServlet {
 			db = new ScanItDB();
 			this.getServletContext().setAttribute("db", db);
 		}
+		
 	}
 	
 	public void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -81,6 +79,9 @@ public class BarcodeServlet extends HttpServlet {
 			timer.cancel();
 			timer = new Timer();
             this.getServletContext().setAttribute("timer", timer);
+            
+            
+            
             Dipendente dipendente = sessionMap.getDSessions().get(session);
 			startSessionTimeoutDipendente(timer, session, 30 * 60 * 1000, sessionMap, dipendente);
 			boolean checkScan = false;

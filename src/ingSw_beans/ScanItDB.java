@@ -1,8 +1,6 @@
 package ingSw_beans;
 
 import java.sql.Connection;
-import java.sql.Date;
-
 import ingSw_beans.interfaces.IScanItDB;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -12,7 +10,6 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -737,6 +734,33 @@ public class ScanItDB implements IScanItDB{
         } catch (ParseException e) {
             e.printStackTrace();
             return 0; // Gestione dell'errore, eventualmente altro comportamento
+        }
+    }
+	
+	
+	public void cancellaResocontoPiuVecchioSeNecessario() {
+        String countQuery = "SELECT COUNT(*) AS count FROM resoconti";
+        String deleteQuery = "DELETE FROM resoconti WHERE id = (SELECT id FROM resoconti ORDER BY data ASC LIMIT 1)";
+
+        try (PreparedStatement countStmt = connection.prepareStatement(countQuery);
+            PreparedStatement deleteStmt = connection.prepareStatement(deleteQuery)
+        ) {
+            // Esegui la query per contare il numero di resoconti
+            ResultSet rs = countStmt.executeQuery();
+            int count = 0;
+            if (rs.next()) {
+                count = rs.getInt("count");
+            }
+
+            // Se ci sono più di 30 resoconti, cancella il più vecchio
+            if (count > 30) {
+                deleteStmt.executeUpdate();
+                System.out.println("Resoconto più vecchio cancellato con successo.");
+            } else {
+                System.out.println("Non sono presenti più di 30 resoconti, nessuna cancellazione necessaria.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

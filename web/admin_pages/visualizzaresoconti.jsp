@@ -23,22 +23,22 @@
 <link rel="stylesheet" href="../styles/admin.css">
 <script src="../scripts/visualizzaresoconti.js"></script>
 <script src="../scripts/utils.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 </head>
 
 <%
-/*
+
 SessionMap sessionMap = (SessionMap) this.getServletContext().getAttribute("sessionMap");
 
-HttpSession s = request.getSession(false); // Recupero session	
+HttpSession sess = request.getSession(false); // Recupero session	
 
 if(sessionMap == null){
 	response.sendRedirect("../login.html"); 
-}else if (!sessionMap.getASessions().containsKey(s) || s == null){
+}else if (!sessionMap.getASessions().containsKey(sess) || sess == null){
 	response.sendRedirect("../login.html");
 }	
-*/
+
 
 
 ScanItDB db = (ScanItDB) this.getServletContext().getAttribute("db");
