@@ -93,8 +93,10 @@ public class ScanItDB implements IScanItDB{
                         return Attore.DIPENDENTE;
                     } else if (dbUsername.startsWith("a")) {
                         return Attore.AMMINISTRATORE;
-                    } else {
-                        return Attore.NONE;
+                    } else if (dbUsername.startsWith("g")){
+                        return Attore.GESTORELOG;
+                    }else {
+                    	return Attore.NONE;
                     }
                 }
             }
@@ -761,6 +763,31 @@ public class ScanItDB implements IScanItDB{
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }    
+  }
+	public void writeLog(Log log) {
+
+
+        // SQL per l'inserimento del log
+        String sql = "INSERT INTO log (username, operazione, esito, timestamp) VALUES (?, ?, ?, ?)";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)
+        ) {
+            // Imposta i parametri nello statement SQL
+            stmt.setString(1, log.getUsername());
+            stmt.setString(2, log.getOperazione());
+            stmt.setString(3, log.getEsito());
+            stmt.setString(4, log.getTimestamp());
+
+            // Esegue l'inserimento
+            int rowsAffected = stmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Log inserito correttamente nel database.");
+            } else {
+                System.out.println("Errore durante l'inserimento del log nel database.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Errore SQL: " + e.getMessage());
         }
     }
 

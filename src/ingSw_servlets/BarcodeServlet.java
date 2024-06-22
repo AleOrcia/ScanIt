@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import com.google.gson.Gson;
 import ingSw_beans.Dipendente;
+import ingSw_beans.Log;
+import ingSw_beans.LogController;
 import ingSw_beans.ScanItDB;
 import ingSw_beans.Scansione;
 import ingSw_beans.SessionMap;
@@ -92,10 +94,12 @@ public class BarcodeServlet extends HttpServlet {
 	        }
 			
 			if(checkScan && checkDec) {
+				LogController.getInstance().writeLog(new Log(dipendente.getUsername(),"Scansione","Scansione eseguita correttamente",System.currentTimeMillis()));
 				out.print("ID: "+scansione.getIdProdotto()+"\nQuantità: "+ scansione.getQuantita()+"\nTimestamp: "+scansione.getTimestamp()+ "\nUsername: " + scansione.getUsername()+"\n\n");
 				out.flush();
 				out.close();
 			}else {
+				LogController.getInstance().writeLog(new Log(dipendente.getUsername(),"Scansione","Scansione fallita",System.currentTimeMillis()));
 				res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // Imposta lo stato della risposta a 500
 				out.print("Fallimento nell'aggiunta al Database!");
 				out.flush();

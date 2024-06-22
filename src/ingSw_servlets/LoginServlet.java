@@ -10,6 +10,8 @@ import ingSw_beans.Amministratore;
 import ingSw_beans.Attore;
 import ingSw_beans.Dipendente;
 import ingSw_beans.FineGiornata;
+import ingSw_beans.Log;
+import ingSw_beans.LogController;
 import ingSw_beans.ScanItDB;
 import ingSw_beans.SessionMap;
 import java.util.Calendar;
@@ -29,6 +31,7 @@ public class LoginServlet extends HttpServlet {
 			sessionMap = new SessionMap();
 			this.getServletContext().setAttribute("sessionMap", sessionMap);
 		}
+		
 		Timer timer = (Timer) this.getServletContext().getAttribute("timer");
 		if (timer == null) {
 			timer = new Timer();
@@ -70,8 +73,9 @@ public class LoginServlet extends HttpServlet {
 		String username = req.getParameter("username");
 		String pw = req.getParameter("password");
 		Attore attore = db.access(username, pw);
+		
 		if (attore.equals(Attore.AMMINISTRATORE)) {			
-			
+			LogController.getInstance().writeLog(new Log(username,"Login","Login eseguito correttamente",System.currentTimeMillis()));
 		    Amministratore a = db.getAmministratoreFromUsername(username);
 			if(!sessionMap.getASessions().containsKey(session)) {
 				sessionMap.getASessions().put(session, a); 
@@ -82,16 +86,26 @@ public class LoginServlet extends HttpServlet {
 			
 			
 		}else if(attore.equals(Attore.DIPENDENTE)) {
-			
+			LogController.getInstance().writeLog(new Log(username,"Login","Login eseguito correttamente",System.currentTimeMillis()));
 			Dipendente d = db.getDipendenteFromUsername(username);
 			if(!sessionMap.getDSessions().containsKey(session)) {
 				sessionMap.getDSessions().put(session, d); 
 			}
 			startSessionTimeoutDipendente(timer, session, 30 * 60 * 1000, sessionMap, d);
 			this.getServletContext().setAttribute("sessionMap", sessionMap);
-			res.sendRedirect("scan.jsp");
+			
+			if(d.getUsername().equals(db.trovaPassword(d.getUsername()))) {
+				res.sendRedirect("changepw.html");
+			}else {
+				res.sendRedirect("scan.jsp");
+			}
+			
+		}else if(attore.equals(Attore.GESTORELOG)){
+			LogController.getInstance().writeLog(new Log(username,"Login","Login eseguito correttamente",System.currentTimeMillis()));
+            res.sendRedirect("visualizzalog.jsp");
 		}else {
-            res.sendRedirect("login.html?loginFailed=true");
+			LogController.getInstance().writeLog(new Log(username,"Login","Login errato",System.currentTimeMillis()));
+			res.sendRedirect("login.html?loginFailed=true");
 		}
 	}
 	

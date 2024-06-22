@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 
+import ingSw_beans.Log;
+import ingSw_beans.LogController;
 import ingSw_beans.ScanItDB;
 import ingSw_beans.SessionMap;
 
@@ -41,6 +43,8 @@ public class RegistraServlet extends HttpServlet{
 		res.setCharacterEncoding("UTF-8");
 		
 		ScanItDB db = (ScanItDB) this.getServletContext().getAttribute("db");
+		SessionMap sessionMap = (SessionMap) this.getServletContext().getAttribute("sessionMap");
+
         // Leggi i parametri dal form
         String nome = req.getParameter("nome");
         String cognome = req.getParameter("cognome");
@@ -53,10 +57,13 @@ public class RegistraServlet extends HttpServlet{
         boolean check = db.registraDipendente(username, username, nome, cognome, data, telefono, indirizzo, documento);
         		
 		if (check) {
-			
+			LogController.getInstance().writeLog(new Log(sessionMap.getAdminUsernameFromSessionID(req.getSession(false)),"Registrazione","Dipendente "+username+" registrato correttamente",System.currentTimeMillis()));
+
 			res.sendRedirect("admin_pages/gestionepersonale.jsp");
 		}
 		else {
+			LogController.getInstance().writeLog(new Log(sessionMap.getAdminUsernameFromSessionID(req.getSession(false)),"Registrazione","Impossibile registrare il dipendente "+username,System.currentTimeMillis()));
+
 			res.sendRedirect("admin_pages/gestionepersonale.jsp?registrazione=false");
 		}
 	}

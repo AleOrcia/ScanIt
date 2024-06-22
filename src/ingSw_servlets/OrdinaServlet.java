@@ -17,10 +17,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ingSw_beans.Log;
+import ingSw_beans.LogController;
 import ingSw_beans.Ordine;
 import ingSw_beans.Prodotto;
 import ingSw_beans.RandomStringGenerator;
 import ingSw_beans.ScanItDB;
+import ingSw_beans.SessionMap;
 
 
 public class OrdinaServlet extends HttpServlet {
@@ -46,10 +49,17 @@ public class OrdinaServlet extends HttpServlet {
 			this.getServletContext().setAttribute("db", db);
 		}
 
+		SessionMap sessionMap = (SessionMap) this.getServletContext().getAttribute("sessionMap");
+		if(sessionMap == null)
+		{
+			sessionMap = new SessionMap();
+			this.getServletContext().setAttribute("sessionMap", sessionMap);
+		}
 	}
 	
 	public void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-
+		
+		SessionMap sessionMap = (SessionMap) this.getServletContext().getAttribute("sessionMap");
 		Gson gson = (Gson) this.getServletContext().getAttribute("gson");
 		ScanItDB db = (ScanItDB) this.getServletContext().getAttribute("db");
 		req.setCharacterEncoding(StandardCharsets.UTF_8.name());
@@ -90,9 +100,11 @@ public class OrdinaServlet extends HttpServlet {
         res.setContentType("text/plain");
         res.setCharacterEncoding("UTF-8");
         if(check) {
+			LogController.getInstance().writeLog(new Log(sessionMap.getAdminUsernameFromSessionID(req.getSession(false)), "Nuovo ordine","Ordine "+o.getId()+" effettuato con successo", System.currentTimeMillis()));
             res.getWriter().print("ok");
 
         }else {
+			LogController.getInstance().writeLog(new Log(sessionMap.getAdminUsernameFromSessionID(req.getSession(false)), "Nuovo ordine","Ordine "+o.getId()+" fallito", System.currentTimeMillis()));
         	res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
 		

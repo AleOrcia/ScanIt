@@ -8,7 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 import java.nio.charset.StandardCharsets;
+
+import ingSw_beans.Log;
+import ingSw_beans.LogController;
 import ingSw_beans.ScanItDB;
+import ingSw_beans.SessionMap;
 
 
 public class AggiornaInventarioServlet extends HttpServlet {
@@ -31,11 +35,18 @@ public class AggiornaInventarioServlet extends HttpServlet {
 			this.getServletContext().setAttribute("db", db);
 		}
 		
+		SessionMap sessionMap = (SessionMap) this.getServletContext().getAttribute("sessionMap");
+		if(sessionMap == null)
+		{
+			sessionMap = new SessionMap();
+			this.getServletContext().setAttribute("sessionMap", sessionMap);
+		}
 
 	}
 	
 	public void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-
+		
+		SessionMap sessionMap = (SessionMap) this.getServletContext().getAttribute("sessionMap");
 		ScanItDB db = (ScanItDB) this.getServletContext().getAttribute("db");
 		req.setCharacterEncoding(StandardCharsets.UTF_8.name());
 		
@@ -45,11 +56,13 @@ public class AggiornaInventarioServlet extends HttpServlet {
 		PrintWriter out = res.getWriter();
 		
 		if(check) {
+			LogController.getInstance().writeLog(new Log(sessionMap.getAdminUsernameFromSessionID(req.getSession(false)), "Conferma arrivo ordine","Ordine "+ordine+" arrivato e inventario aggiornato", System.currentTimeMillis()));
 			res.setStatus(HttpServletResponse.SC_OK);
 			out.print("ok");
 			out.flush();
 			out.close();
 		}else {
+			LogController.getInstance().writeLog(new Log(sessionMap.getAdminUsernameFromSessionID(req.getSession(false)), "Conferma arrivo ordine","Ordine "+ordine+" arrivato, aggiornamento inventario fallito", System.currentTimeMillis()));			
 			res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			out.print("Aggiornamento DB non riuscito");
 			out.flush();

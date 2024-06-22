@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import ingSw_beans.Dipendente;
+import ingSw_beans.Log;
+import ingSw_beans.LogController;
 import ingSw_beans.ScanItDB;
 import ingSw_beans.SessionMap;
 
@@ -39,6 +41,7 @@ public class LicenziaServlet extends HttpServlet{
 		boolean check = db.licenziaDipendente(username);
 		PrintWriter out = res.getWriter();
 		if (check) {
+			LogController.getInstance().writeLog(new Log(sessionMap.getAdminUsernameFromSessionID(req.getSession(false)),"Licenziamento","Dipendente "+username+" licenziato correttamente",System.currentTimeMillis()));
 			Dipendente d = db.getDipendenteFromUsername(username);
 			db.getDipendenti().remove(d);
 			for (HttpSession h : sessionMap.getDSessions().keySet()) {
@@ -49,6 +52,7 @@ public class LicenziaServlet extends HttpServlet{
 			out.write("ok");
 		}
 		else {
+			LogController.getInstance().writeLog(new Log(sessionMap.getAdminUsernameFromSessionID(req.getSession(false)),"Licenziamento","Impossibile licenziare il dipendente "+username,System.currentTimeMillis()));
 			res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			out.write("error");
 		}

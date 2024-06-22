@@ -31,5 +31,14 @@ public class SessionMap implements Serializable {
 		return ASessions;
 	}
 	
+	public String getAdminUsernameFromSessionID(HttpSession s) {
+		for(HttpSession h : getASessions().keySet()) {
+			if(h.getId().equals(s.getId())) {
+				return getASessions().get(h).getUsername();
+			}
+		}
+		return null;
+	}
+	
 }
 
