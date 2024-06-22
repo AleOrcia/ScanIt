@@ -68,7 +68,6 @@ public class Resoconto {
 	            try {
 	                Number parsed = formatoEuro.parse(prezzoString);
 	                prezzoProdotto = parsed.doubleValue();
-	                System.out.println("Prezzo del prodotto: " + prezzoProdotto);
 	            } catch (ParseException e) {
 	                e.printStackTrace(); // Gestire l'eccezione in modo appropriato
 	            }

@@ -72,10 +72,6 @@ public class LoginServlet extends HttpServlet {
 		Attore attore = db.access(username, pw);
 		if (attore.equals(Attore.AMMINISTRATORE)) {			
 			
-			//LocalDate date = LocalDate.of(2024, 06, 25);
-			//db.aggiungiResocontoGiornaliero(date,db.getScansioniFromData(date));
-			
-			
 		    Amministratore a = db.getAmministratoreFromUsername(username);
 			if(!sessionMap.getASessions().containsKey(session)) {
 				sessionMap.getASessions().put(session, a); 
