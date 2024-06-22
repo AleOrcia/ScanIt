@@ -1,19 +1,41 @@
 package ingSw_beans;
 
 import java.sql.Connection;
+import java.sql.Date;
+
 import ingSw_beans.interfaces.IScanItDB;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+
 
 public class ScanItDB implements IScanItDB{
 	private static final String DB_URL = "jdbc:sqlite:" + "C:\\Users\\aleor\\eclipse-workspace\\IngSW\\ScanIt\\web\\DBs\\ScanItDB.db";
+	private static ScanItDB instance;
     private Connection connection;
 
+    public static ScanItDB getInstance() {
+        if (instance == null) {
+            instance = new ScanItDB();
+        }
+        return instance;
+    }
+    
     public ScanItDB() {
         connect();
     }
@@ -343,28 +365,49 @@ public class ScanItDB implements IScanItDB{
     
     
 //SEZIONE ORDINI
-    public List<Ordine> listaOrdini(){
-    	List<Ordine> ordini = new ArrayList<Ordine>();
-    	String selectSQL = "SELECT * FROM ordini";
+    public List<Ordine> listaOrdini() {
+        List<Ordine> ordini = new ArrayList<>();
+
+        String selectSQL = "SELECT * FROM ordini";
+
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(selectSQL)) {
+
             while (resultSet.next()) {
-            	String idProdotti[] = resultSet.getString("prodotti").split(",");
-            	List<Prodotto> prodotti = new ArrayList<Prodotto>();
-            	for (String id : idProdotti) {
-            		if (getProdotto(id) != null) {
-                		prodotti.add(getProdotto(id));
-                	}
-            	}
-            	
-            	ordini.add(new Ordine(resultSet.getString("id"), prodotti));
+                String idOrdine = resultSet.getString("id");
+                String dataOrdine = resultSet.getString("data");
+
+                Map<Prodotto, Integer> prodotti = new HashMap<>();
+
+                // Query per recuperare le righe dell'ordine dalla tabella righe_ordine
+                String selectRigheSQL = "SELECT id_prodotto, quantita FROM righe_ordine WHERE id_ordine = ?";
+                try (PreparedStatement preparedStatement = connection.prepareStatement(selectRigheSQL)) {
+                    preparedStatement.setString(1, idOrdine);
+                    ResultSet righeResultSet = preparedStatement.executeQuery();
+
+                    while (righeResultSet.next()) {
+                        String idProdotto = righeResultSet.getString("id_prodotto");
+                        int quantita = righeResultSet.getInt("quantita");
+
+                        Prodotto prodotto = getProdotto(idProdotto); // Metodo per recuperare il prodotto dal DB
+                        if (prodotto != null) {
+                            prodotti.put(prodotto, quantita);
+                        }
+                    }
+                }
+
+                Ordine ordine = new Ordine(idOrdine, prodotti, dataOrdine);
+                ordini.add(ordine);
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return ordini;
     }
-    
+
+
     
     public List<Fornitore> listaFornitori(){
     	List<Fornitore> fornitori = new ArrayList<Fornitore>();
@@ -386,5 +429,315 @@ public class ScanItDB implements IScanItDB{
         return fornitori;
     }
     
+    public boolean aggiungiOrdine(Ordine ordine) {
+        String insertOrdineSQL = "INSERT INTO ordini (id, data) VALUES (?, ?)";
+        String insertRigheOrdineSQL = "INSERT INTO righe_ordine (id_ordine, id_prodotto, quantita) VALUES (?, ?, ?)";
+
+        try (PreparedStatement insertOrdineStmt = connection.prepareStatement(insertOrdineSQL);
+             PreparedStatement insertRigheOrdineStmt = connection.prepareStatement(insertRigheOrdineSQL)) {
+
+            // Inserimento dell'ordine nella tabella ordini
+            insertOrdineStmt.setString(1, ordine.getId());
+            insertOrdineStmt.setString(2, ordine.getData());
+            insertOrdineStmt.executeUpdate();
+
+            // Inserimento delle righe ordine nella tabella righe_ordine
+            for (Map.Entry<Prodotto, Integer> entry : ordine.getProdotti().entrySet()) {
+                Prodotto prodotto = entry.getKey();
+                int quantita = entry.getValue();
+
+                insertRigheOrdineStmt.setString(1, ordine.getId());
+                insertRigheOrdineStmt.setString(2, prodotto.getId());
+                insertRigheOrdineStmt.setInt(3, quantita);
+                insertRigheOrdineStmt.executeUpdate();
+            }
+
+            return true; // Operazione completata con successo
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public boolean rimuoviOrdine(String ordineId) {
+        String selectRigheOrdineSQL = "SELECT id_prodotto, quantita FROM righe_ordine WHERE id_ordine = ?";
+        String deleteRigheOrdineSQL = "DELETE FROM righe_ordine WHERE id_ordine = ?";
+        String deleteOrdineSQL = "DELETE FROM ordini WHERE id = ?";
+        String updateProdottoSQL = "UPDATE prodotti SET quantita = quantita + ? WHERE id = ?";
+
+        try (PreparedStatement selectRigheOrdineStmt = connection.prepareStatement(selectRigheOrdineSQL);
+             PreparedStatement deleteRigheOrdineStmt = connection.prepareStatement(deleteRigheOrdineSQL);
+             PreparedStatement deleteOrdineStmt = connection.prepareStatement(deleteOrdineSQL);
+             PreparedStatement updateProdottoStmt = connection.prepareStatement(updateProdottoSQL)) {
+
+            // Recupero delle righe ordine per ottenere i prodotti e le quantità
+            selectRigheOrdineStmt.setString(1, ordineId);
+            ResultSet resultSet = selectRigheOrdineStmt.executeQuery();
+            Map<String, Integer> prodottiQuantita = new HashMap<>();
+
+            while (resultSet.next()) {
+                String idProdotto = resultSet.getString("id_prodotto");
+                int quantita = resultSet.getInt("quantita");
+                prodottiQuantita.put(idProdotto, quantita);
+            }
+
+            // Rimozione delle righe ordine dalla tabella righe_ordine
+            deleteRigheOrdineStmt.setString(1, ordineId);
+            deleteRigheOrdineStmt.executeUpdate();
+
+            // Rimozione dell'ordine dalla tabella ordini
+            deleteOrdineStmt.setString(1, ordineId);
+            int rowsAffected = deleteOrdineStmt.executeUpdate();
+
+            // Aggiornamento delle quantità dei prodotti nel database
+            for (Map.Entry<String, Integer> entry : prodottiQuantita.entrySet()) {
+                String idProdotto = entry.getKey();
+                int quantita = entry.getValue();
+                updateProdottoStmt.setInt(1, quantita);
+                updateProdottoStmt.setString(2, idProdotto);
+                updateProdottoStmt.executeUpdate();
+            }
+
+            return rowsAffected > 0; // Operazione completata con successo se almeno una riga è stata rimossa
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    
+    public int getQuantitaOrdinataFromOrdine(String idOrdine, String idProdotto) {
+        int quantitaOrdinata = 0;
+        String selectSQL = "SELECT quantita FROM righe_ordine WHERE id_ordine = ? AND id_prodotto = ?";
+        
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
+            preparedStatement.setString(1, idOrdine);
+            preparedStatement.setString(2, idProdotto);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                quantitaOrdinata = resultSet.getInt("quantita");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return quantitaOrdinata;
+    }
+
+
+    
+    public String getNomeProdottoFromFornitori(String id) {
+    	String nome = null;
+    	String selectSQL = "SELECT p.nome FROM fornitori f JOIN prodotti p ON f.id = p.id WHERE f.id = ?";
+    	
+    	try (PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)){
+    			preparedStatement.setString(1, id);
+                ResultSet resultSet = preparedStatement.executeQuery();
+           	
+               if (resultSet.next()) {
+               		nome = resultSet.getString("nome");	
+               }
+               	
+               
+           } catch (SQLException e) {
+               e.printStackTrace();
+           }
+           return nome;
+    }
+    
+    public Prodotto getProdottoByID(String id) {
+        Prodotto p = null;
+        String selectSQL = "SELECT * FROM prodotti WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)) {
+            preparedStatement.setString(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                p = new Prodotto(
+                    resultSet.getString("id"),
+                    resultSet.getString("nome"),
+                    resultSet.getString("descrizione"),
+                    resultSet.getDouble("prezzo"),
+                    resultSet.getInt("quantita"),
+                    resultSet.getString("idFornitore")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return p;
+    }
+
+
+
+
+//SEZIONE RESOCONTI
+    
+    public List<Resoconto> listaResoconti() {
+        List<Resoconto> resoconti = new ArrayList<>();
+
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM resoconti")) {
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String dataStr = rs.getString("data");
+                LocalDate data = LocalDate.parse(dataStr, formatter); // Conversione da stringa a LocalDate
+
+                String scansioniJson = rs.getString("scansioni");
+                List<Scansione> scansioni = convertiJsonInScansioni(scansioniJson);
+
+                Resoconto resoconto = new Resoconto();
+                resoconto.setId(id);
+                resoconto.setData(data);
+                resoconto.setScansioni(scansioni);
+
+                resoconti.add(resoconto);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return resoconti;
+    }
+
+
+	public boolean aggiungiResocontoGiornaliero(LocalDate dataGiorno, List<Scansione> scansioniDelGiorno) {
+	    String insertResocontoSQL = "INSERT INTO resoconti (data, scansioni) VALUES (?, ?)";
+	
+	    try (PreparedStatement insertResocontoStmt = connection.prepareStatement(insertResocontoSQL)) {
+	        // Converti la lista di scansioni in una rappresentazione JSON o strutturata per il database
+	        String scansioniJson = convertiScansioniInJson(scansioniDelGiorno);
+	
+	        insertResocontoStmt.setString(1, dataGiorno.toString());
+	        insertResocontoStmt.setString(2, scansioniJson);
+	        insertResocontoStmt.executeUpdate();
+	
+	        return true; // Operazione completata con successo
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
+	
+	private String convertiScansioniInJson(List<Scansione> scansioni) {
+	    // Esempio di conversione in JSON utilizzando Gson
+	    Gson gson = new Gson();
+	    return gson.toJson(scansioni);
+	}
+	
+	public List<Scansione> getScansioniPerGiornoDaResoconto(LocalDate dataGiorno) {
+	    String selectScansioniSQL = "SELECT scansioni FROM resoconti WHERE data = ?";
+
+	    try (PreparedStatement selectScansioniStmt = connection.prepareStatement(selectScansioniSQL)) {
+	        selectScansioniStmt.setString(1, dataGiorno.toString());
+	        ResultSet resultSet = selectScansioniStmt.executeQuery();
+
+	        // Processa il risultato per recuperare le scansioni
+	        List<Scansione> scansioni = new ArrayList<>();
+	        while (resultSet.next()) {
+	            String scansioniJson = resultSet.getString("scansioni");
+	            List<Scansione> scansioniDelGiorno = convertiJsonInScansioni(scansioniJson);
+	            scansioni.addAll(scansioniDelGiorno);
+	        }
+
+	        return scansioni;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return Collections.emptyList();
+	    }
+	}
+	 public List<Scansione> getScansioniFromData(LocalDate dataCercata) {
+	        List<Scansione> scansioni = new ArrayList<>();
+	        PreparedStatement stmt = null;
+	        ResultSet rs = null;
+
+	        try {
+
+	            String query = "SELECT username, id_prodotto, quantita, timestamp FROM scansioni WHERE DATE(timestamp) = ?";
+	            stmt = connection.prepareStatement(query);
+	            stmt.setString(1, dataCercata.toString());
+
+	            // Esecuzione della query
+	            rs = stmt.executeQuery();
+
+	            // Iterazione sui risultati e creazione degli oggetti Scansione
+	            while (rs.next()) {
+	                String username = rs.getString("username");
+	                String id = rs.getString("id_prodotto");
+	                int quantita = rs.getInt("quantita");
+	                String timestampStr = rs.getString("timestamp");
+	                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.mmm'Z'");
+	                long timestamp = dateFormat.parse(timestampStr).getTime();
+	                
+
+	                Scansione scansione = new Scansione(timestamp, quantita, username, id);
+	                scansioni.add(scansione);
+	            }
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        } catch (ParseException e2) {
+	        	e2.printStackTrace();
+	        }
+
+	        return scansioni;
+	    }
+
+
+	private List<Scansione> convertiJsonInScansioni(String scansioniJson) {
+	    Gson gson = new Gson();
+	    Type listType = new TypeToken<List<Scansione>>() {}.getType();
+	    return gson.fromJson(scansioniJson, listType);
+	}
+
+	
+	
+	public List<Scansione> listaScansioni() {
+        List<Scansione> scansioni = new ArrayList<>();
+
+        // Connessione al database
+        try (PreparedStatement stmt = connection.prepareStatement("SELECT * FROM scansioni");
+             ResultSet rs = stmt.executeQuery()) {
+
+            // Iterazione sui risultati della query
+            while (rs.next()) {
+                // Leggi i valori dal ResultSet
+                String username = rs.getString("username");
+                String idProdotto = rs.getString("id_prodotto");
+                int quantita = rs.getInt("quantita");
+                String timestampStr = rs.getString("timestamp");
+
+                // Converti il timestamp dalla stringa al formato long
+                long timestamp = parseTimestamp(timestampStr);
+
+                // Crea l'oggetto Scansione e aggiungilo alla lista
+                Scansione scansione = new Scansione(timestamp, quantita, username, idProdotto);
+                scansioni.add(scansione);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return scansioni;
+    }
+	
+	private long parseTimestamp(String timestampStr) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.mmm'Z'");
+
+        try {
+            // Parsifica la stringa di timestamp nel formato specificato
+            return dateFormat.parse(timestampStr).getTime();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return 0; // Gestione dell'errore, eventualmente altro comportamento
+        }
+    }
 
 }

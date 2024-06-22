@@ -19,21 +19,22 @@
   </style>
 <link rel="stylesheet" href="../styles/admin.css">
 <script src="../scripts/ordinascorte.js"></script>
+<script src="../scripts/utils.js"></script>
 
 </head>
 
 <%
-/*
-	SessionMap sessionMap = (SessionMap) this.getServletContext().getAttribute("sessionMap");
-	
-	HttpSession s = request.getSession(false); // Recupero session	
-	
-	if(sessionMap == null){
-		response.sendRedirect("../login.html"); 
-	}else if (!sessionMap.getASessions().containsKey(s) || s == null){
-		response.sendRedirect("../login.html");
-	}	
-*/
+
+SessionMap sessionMap = (SessionMap) this.getServletContext().getAttribute("sessionMap");
+
+HttpSession s = request.getSession(false); // Recupero session	
+
+if(sessionMap == null){
+	response.sendRedirect("../login.html"); 
+}else if (!sessionMap.getASessions().containsKey(s) || s == null){
+	response.sendRedirect("../login.html");
+}	
+
 
 ScanItDB db = (ScanItDB) this.getServletContext().getAttribute("db");
 if(db == null)
@@ -80,22 +81,33 @@ int index = 0;
 			                    <th class="border-b-2 p-2">ID</th>
 			                    <th class="border-b-2 p-2">ID Fornitore</th>
 			                </tr>
-			                <tr>
+			               
+			                <tr>      
 			                    <th><input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" name="nomeInput" id="nomeInput" size="20"></th>
 			                    <th><input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" name="idInput" id="idInput" size="20"></th>
 			                    <th><input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="text" name="idFornitoreInput" id="idFornitoreInput" size="20"></th>
-			                    <th><input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="submit" name="submit" id="submit" size="20"></th>
+			                    <th><button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-blue-400 dark:hover:bg-blue-500 dark:focus:ring-offset-gray-800" id="cerca" onclick="cerca()">Cerca</button></th>
 			                </tr>
 			            </thead>
 			            <tbody>
+			           			<tr>
+				                	<th class="border-b-2 p-2"><strong>ID Fornitore</strong></th>
+				                    <th class="border-b-2 p-2"><strong>ID</strong></th>
+				                    <th class="border-b-2 p-2"><strong>Costo</strong></th>
+				                </tr>
 			                <% for (Fornitore f : db.listaFornitori()) { %>
+				                
 			                    <tr>
 			                        <td class="border-b p-2" id="idFornitore<%=index%>"><%= f.getIdFornitore() %></td>
 			                        <td class="border-b p-2" id="id<%=index%>"><%= f.getId() %></td>
+			                        <td class="border-b p-2" id="nome<%=index%>"><%= db.getNomeProdottoFromFornitori(f.getId()) %></td>
 			                        <td class="border-b p-2" id="costo<%=index%>"><%= f.getCosto() %></td>
 			                        <td class="border-b p-2"><button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-blue-400 dark:hover:bg-blue-500 dark:focus:ring-offset-gray-800" id="add" onclick="add(<%=index%>)">Aggiungi</button></td>
 			                    </tr>
-			                    <% index++; } %>
+			                    <% 
+			                   index++; 
+			                    } 
+			                    %>
 			            </tbody>
 			        </table>
 			    </div>
@@ -107,8 +119,10 @@ int index = 0;
 					        <tr>
 					            <th class="border-b-2 p-2">Nome</th>
 					            <th class="border-b-2 p-2">ID</th>
+					            <th class="border-b-2 p-2">ID Fornitore</th>
 					            <th class="border-b-2 p-2">Costo</th>
 					            <th class="border-b-2 p-2">Quantità</th>
+					            
 					        </tr>
 					    </thead>
 					    <tbody id="corpoTabellaCarrello">

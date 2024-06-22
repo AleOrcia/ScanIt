@@ -1,4 +1,0 @@
-a0000:123456:Filippo:Giorgi
-a0001:654321:Marco:Merlonghi
-d0000:Ciao1234!:Alessandro:Orciari:14/02/2002:3333333333:Via Dante Alighieri, 1:123456789
-d0001:ciao:Giovanni:Giorgio:01/02/2003:3334444444:Via Francesco Petrarca, 2:987654321

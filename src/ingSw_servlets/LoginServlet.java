@@ -1,20 +1,18 @@
 package ingSw_servlets;
 
 import java.io.IOException;
-
+import java.time.LocalDate;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import ingSw_beans.Amministratore;
 import ingSw_beans.Attore;
 import ingSw_beans.Dipendente;
 import ingSw_beans.ScanItDB;
 import ingSw_beans.SessionMap;
-
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -55,6 +53,10 @@ public class LoginServlet extends HttpServlet {
 		String pw = req.getParameter("password");
 		Attore attore = db.access(username, pw);
 		if (attore.equals(Attore.AMMINISTRATORE)) {			
+			
+			//LocalDate date = LocalDate.of(2024, 06, 25);
+			//db.aggiungiResocontoGiornaliero(date,db.getScansioniFromData(date));
+			
 			
 		    Amministratore a = db.getAmministratoreFromUsername(username);
 			if(!sessionMap.getASessions().containsKey(session)) {

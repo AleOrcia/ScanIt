@@ -56,7 +56,24 @@
         <servlet-name>ChangePWServlet</servlet-name>
         <url-pattern>/ChangePWServlet</url-pattern>
     </servlet-mapping>
-	
+    
+    <servlet>
+        <servlet-name>OrdinaServlet</servlet-name>
+        <servlet-class>ingSw_servlets.OrdinaServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OrdinaServlet</servlet-name>
+        <url-pattern>/OrdinaServlet</url-pattern>
+    </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>AggiornaInventarioServlet</servlet-name>
+        <servlet-class>ingSw_servlets.AggiornaInventarioServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AggiornaInventarioServlet</servlet-name>
+        <url-pattern>/AggiornaInventarioServlet</url-pattern>
+    </servlet-mapping>	
 	<!-- Welcome pages -->
 	<!-- pleonastico: tomcat "tenta" in automatico le index.html e index.jsp -->	
 	<welcome-file-list>

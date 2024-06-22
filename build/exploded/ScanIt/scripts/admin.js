@@ -1,37 +1,5 @@
-   function redirect(e){
-	   if(e.id === "ai"){
-		   window.location.href = 'aggiornainventario.jsp';
-	   }else if(e.id === "gp"){
-		   window.location.href = 'gestionepersonale.jsp';
-	   }else if(e.id === "os"){
-		   window.location.href = 'ordinascorte.jsp';
-	   }else if(e.id === "vr"){
-		   window.location.href = 'visualizzaresoconti.jsp';
-	   }else if(e.id === "vs"){
-		   window.location.href = 'visualizzascorte.jsp';
-	   }else if (e.id === "gm"){
-		   window.location.href = 'gestionemagazzino.jsp';
-	   }
-   }
-/*   
-function showDipendente(button) {
-    // Trova il padre tr del bottone
-    var row = button.closest('tr');
 
-    // Trova tutte le righe nascoste successive direttamente
-    var hiddenRows = Array.from(row.parentElement.children).filter(function(row) {
-        return row.classList.contains('hidden-info');
-    });
 
-    // Alterna la visibilità di ciascuna riga nascosta
-    hiddenRows.forEach(function(hiddenRow) {
-        hiddenRow.style.display = (hiddenRow.style.display === 'none' || hiddenRow.style.display === '') ? 'table-row' : 'none';
-    });
-
-    // Modifica la classe del triangolo per indicare lo stato attuale di visualizzazione
-    button.classList.toggle('triangle-up');
-}
-*/
 function showDipendente(button, index) {
 	
 	var indirizzo = document.getElementById('indirizzo'+index);

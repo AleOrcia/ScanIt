@@ -1,7 +1,6 @@
 package ingSw_servlets;
 
-import java.io.File;
-import java.io.FileWriter;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
@@ -17,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import ingSw_beans.Dipendente;
 import ingSw_beans.ScanItDB;

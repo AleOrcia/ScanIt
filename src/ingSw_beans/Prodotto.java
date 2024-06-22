@@ -84,7 +84,29 @@ public class Prodotto {
 		this.idFornitore = idFornitore;
 	}
 	
-	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("----------------------");
+		sb.append("\n");
+		sb.append("ID: "+getId());
+		sb.append("\n");
+		sb.append("Nome: "+getNome());
+		sb.append("\n");
+		sb.append("Descrizione: "+getDescrizione());
+		sb.append("\n");
+		sb.append("Prezzo: "+getPrezzo());
+		sb.append("\n");
+		sb.append("Quantità: "+getQuantita());
+		sb.append("\n");
+		sb.append("Fornitore: "+getIdFornitore());
+		sb.append("\n");
+		sb.append("----------------------");
+		sb.append("\n");
+		sb.append("\n");
+		
+		return sb.toString();
+	}
 	
 	
 }

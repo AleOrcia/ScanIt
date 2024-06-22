@@ -15,9 +15,14 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+    
+    .low-stock {
+        color: red;
+    }
   </style>
 <link rel="stylesheet" href="../styles/admin.css">
 <script src="../scripts/admin.js"></script>
+<script src="../scripts/utils.js"></script>
 
 </head>
  
@@ -87,14 +92,16 @@ if(db == null)
                    </thead>
                    <tbody>
 				    <% 
-				    for (Prodotto p : db.listaProdotti()) { %>
+				    for (Prodotto p : db.listaProdotti()) { 
+				    	String lowStockClass = p.getQuantita() < 10 ? "low-stock" : "";
+				    	%>
 				        <tr>
 				            <td class="border-b p-2"><%= p.getId() %></td>
 				            <td class="border-b p-2"><%= p.getNome() %></td>
 				            <td class="border-b p-2"><%= p.getDescrizione() %></td>
 				            <td class="border-b p-2"><%= p.getIdFornitore() %></td>
 				            <td class="border-b p-2"><%= p.getPrezzo() %></td>
-				           	<td class="border-b p-2"><%= p.getQuantita() %></td>
+				           	<td class="border-b p-2 <%= lowStockClass %>"><%= p.getQuantita() %></td>
 				            
 				        </tr>
 				        

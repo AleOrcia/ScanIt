@@ -1,15 +1,20 @@
 package ingSw_beans;
 
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class Fornitore {
 	private String id;
 	private String idFornitore;
 	private double costo;
+	NumberFormat formatoEuro;
+
 	
 	public Fornitore(String id, String idFornitore, double costo) {
 		this.id = id;
 		this.idFornitore = idFornitore;
 		this.costo = costo;
+		this.formatoEuro = NumberFormat.getCurrencyInstance(Locale.ITALY);
 	}
 
 	public String getId() {
@@ -28,8 +33,8 @@ public class Fornitore {
 		this.idFornitore = idFornitore;
 	}
 
-	public double getCosto() {
-		return costo;
+	public String getCosto() {
+		return this.formatoEuro.format(costo);
 	}
 
 	public void setCosto(double costo) {

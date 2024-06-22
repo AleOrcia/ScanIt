@@ -172,6 +172,7 @@ int index = 0;
    </div>
 
    <script src="../scripts/admin.js"></script>
+   <script src="../scripts/utils.js"></script>
    <script>
    window.onload = function() {
 	    const params = getQueryParams();
