@@ -14,13 +14,13 @@ public class SessionMap implements Serializable {
 
 	private Map<HttpSession, Dipendente> DSessions; // Sessioni attive: utente + numero richieste
 	private Map<HttpSession, Amministratore> ASessions;
-	//private List<LocalDateTime> date; // Timestamps delle richieste
+	private Map<HttpSession, GestoreLog> GSessions;
 
 	public SessionMap() {
 		super();
 		this.ASessions = new HashMap<HttpSession, Amministratore>();
 		this.DSessions = new HashMap<HttpSession, Dipendente>();
-		//this.date = new ArrayList<LocalDateTime>();
+		this.GSessions = new HashMap<HttpSession, GestoreLog>();
 	}
 	
 	public Map<HttpSession, Dipendente> getDSessions() {
@@ -29,6 +29,10 @@ public class SessionMap implements Serializable {
 	
 	public Map<HttpSession, Amministratore> getASessions() {
 		return ASessions;
+	}
+	
+	public Map<HttpSession, GestoreLog> getGSessions() {
+		return GSessions;
 	}
 	
 	public String getAdminUsernameFromSessionID(HttpSession s) {

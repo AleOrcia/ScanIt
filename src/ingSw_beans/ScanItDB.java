@@ -1,7 +1,6 @@
 package ingSw_beans;
 
 import java.sql.Connection;
-import ingSw_beans.interfaces.IScanItDB;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,10 +20,10 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 
 
-public class ScanItDB implements IScanItDB{
+public class ScanItDB {
 	private static final String DB_URL = "jdbc:sqlite:" + "C:\\Users\\aleor\\eclipse-workspace\\IngSW\\ScanIt\\web\\DBs\\ScanItDB.db";
-	private static ScanItDB instance;
-    private Connection connection;
+	private static ScanItDB instance = null;
+    private static Connection connection;
 
     public static ScanItDB getInstance() {
         if (instance == null) {
@@ -33,7 +32,7 @@ public class ScanItDB implements IScanItDB{
         return instance;
     }
     
-    public ScanItDB() {
+    protected ScanItDB() {
         connect();
     }
 
@@ -46,7 +45,8 @@ public class ScanItDB implements IScanItDB{
         }
     }
     
-    public void close() {
+    /*
+    private void close() {
         try {
             if (connection != null) {
                 connection.close();
@@ -55,6 +55,7 @@ public class ScanItDB implements IScanItDB{
             e.printStackTrace();
         }
     }
+    */
 
     
     //SEZIONE PERSONALE
@@ -234,6 +235,21 @@ public class ScanItDB implements IScanItDB{
         return amministratori;
 	}
 	
+	public List<GestoreLog> getGestoriLog() {
+		List<GestoreLog> gestoriLog = new ArrayList<GestoreLog>();
+    	String selectSQL = "SELECT * FROM utenti WHERE username LIKE 'g%'";
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(selectSQL)) {
+            while (resultSet.next()) {	
+            	gestoriLog.add(new GestoreLog(resultSet.getString("nome"), 
+        				resultSet.getString("cognome"), resultSet.getString("username")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return gestoriLog;
+	}
+	
 	
 	
 	public Dipendente getDipendenteFromUsername(String username)
@@ -257,7 +273,17 @@ public class ScanItDB implements IScanItDB{
 		return null;
 	}
 	
-	public boolean isInDB(String username) {
+	public GestoreLog getGestoreLogFromUsername(String username)
+	{
+		for(GestoreLog g : getGestoriLog())
+		{
+			if(g.getUsername().equals(username))
+				return g;
+		}
+		return null;
+	}
+	
+	public  boolean isInDB(String username) {
 		for (Dipendente d : getDipendenti()) {
 			if(d.getUsername().equals(username)) {
 				return true;
@@ -284,7 +310,7 @@ public class ScanItDB implements IScanItDB{
     
 //SEZIONE PRODOTTI
     
-    public List<Prodotto> listaProdotti(){
+    public  List<Prodotto> listaProdotti(){
     	List<Prodotto> prodotti = new ArrayList<Prodotto>();
     	String selectSQL = "SELECT * FROM prodotti";
         try (Statement statement = connection.createStatement();
@@ -301,7 +327,7 @@ public class ScanItDB implements IScanItDB{
         return prodotti;
     }
     
-    private Prodotto getProdotto(String id) {
+    private  Prodotto getProdotto(String id) {
     	for (Prodotto p : listaProdotti()) {
     		if (p.getId().equals(id))
     			return p;
@@ -309,7 +335,7 @@ public class ScanItDB implements IScanItDB{
     	return null;
     }
     
-    public boolean aggiungiScansione(String username, String idProdotto, String quantita, String timestamp) {
+    public  boolean aggiungiScansione(String username, String idProdotto, String quantita, String timestamp) {
         String sql = "INSERT INTO scansioni(username, id_prodotto, quantita, timestamp) VALUES(?, ?, ?, ?)";
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {

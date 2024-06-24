@@ -32,17 +32,17 @@
 </head>
 
 <%
-/*
-  SessionMap sessionMap = (SessionMap) this.getServletContext().getAttribute("sessionMap");
 
-  HttpSession s = request.getSession(false); // Recupero session
+SessionMap sessionMap = (SessionMap) this.getServletContext().getAttribute("sessionMap");
 
-  if(sessionMap == null){
-    response.sendRedirect("login.html"); 
-  }else if (!sessionMap.getASessions().containsKey(s) || s == null){
-    response.sendRedirect("login.html");
-  } 
-*/ 
+HttpSession s = request.getSession(false); // Recupero session
+
+if(sessionMap == null){
+  response.sendRedirect("login.html"); 
+}else if (!sessionMap.getGSessions().containsKey(s) || s == null){
+  response.sendRedirect("login.html");
+} 
+
 int index = 0;
 
 LocalDate oggi = LocalDate.now();

@@ -2,3 +2,6 @@ hhhhh|Login|Login errato|2024-06-22T15:37:23.037Z
 a0000|Login|Login eseguito correttamente|2024-06-22T15:37:39.037Z
 g0000|Login|Login eseguito correttamente|2024-06-22T15:49:42.049Z
 g0000|Login|Login eseguito correttamente|2024-06-22T15:50:39.050Z
+a0000|Login|Login eseguito correttamente|2024-06-24T15:37:09.037Z
+g0000|Login|Login eseguito correttamente|2024-06-24T15:37:45.037Z
+d0000|Login|Login eseguito correttamente|2024-06-24T15:38:03.038Z

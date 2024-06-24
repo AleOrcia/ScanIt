@@ -10,6 +10,7 @@ import ingSw_beans.Amministratore;
 import ingSw_beans.Attore;
 import ingSw_beans.Dipendente;
 import ingSw_beans.FineGiornata;
+import ingSw_beans.GestoreLog;
 import ingSw_beans.Log;
 import ingSw_beans.LogController;
 import ingSw_beans.ScanItDB;
@@ -41,7 +42,7 @@ public class LoginServlet extends HttpServlet {
 		ScanItDB db = (ScanItDB) this.getServletContext().getAttribute("db");
 		if(db == null)
 		{
-			db = new ScanItDB();
+			db = ScanItDB.getInstance();
 			this.getServletContext().setAttribute("db", db);
 		}
 		
@@ -102,7 +103,13 @@ public class LoginServlet extends HttpServlet {
 			
 		}else if(attore.equals(Attore.GESTORELOG)){
 			LogController.getInstance().writeLog(new Log(username,"Login","Login eseguito correttamente",System.currentTimeMillis()));
-            res.sendRedirect("visualizzalog.jsp");
+            
+			GestoreLog g = db.getGestoreLogFromUsername(username);
+			if(!sessionMap.getGSessions().containsKey(session)) {
+				sessionMap.getGSessions().put(session, g); 
+			}
+			
+			res.sendRedirect("visualizzalog.jsp");
 		}else {
 			LogController.getInstance().writeLog(new Log(username,"Login","Login errato",System.currentTimeMillis()));
 			res.sendRedirect("login.html?loginFailed=true");

@@ -32,7 +32,7 @@ public class RegistraServlet extends HttpServlet{
 		ScanItDB db = (ScanItDB) this.getServletContext().getAttribute("db");
 		if(db == null)
 		{
-			db = new ScanItDB();
+			db = ScanItDB.getInstance();
 			this.getServletContext().setAttribute("db", db);
 		}
 	}
