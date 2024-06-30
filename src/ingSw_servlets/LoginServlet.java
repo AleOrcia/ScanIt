@@ -49,20 +49,16 @@ public class LoginServlet extends HttpServlet {
 		//Evento FineGiornata
         Timer fineGiornata = new Timer();
         Calendar giorno = Calendar.getInstance();
-        giorno.set(
-          Calendar.DAY_OF_WEEK,
-          Calendar.SUNDAY
-        );
-        giorno.set(Calendar.HOUR, 0);
+
+        // Configura l'orario per la mezzanotte del giorno successivo
+        giorno.set(Calendar.HOUR_OF_DAY, 0);
         giorno.set(Calendar.MINUTE, 0);
         giorno.set(Calendar.SECOND, 0);
         giorno.set(Calendar.MILLISECOND, 0);
-        // Ogni mezzanotte
-        fineGiornata.schedule(
-          new FineGiornata(),
-          giorno.getTime(),
-          1000 * 60 * 60 * 24 * 7
-        );
+        giorno.add(Calendar.DAY_OF_MONTH, 1);
+
+        // Programma il compito per eseguirsi ogni giorno alla mezzanotte
+        fineGiornata.scheduleAtFixedRate(new FineGiornata(), giorno.getTime(), 1000 * 60 * 60 * 24);
 	}
 	
 	public void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {

@@ -28,6 +28,6 @@
 	<classpathentry kind="lib" path="lib/slf4j-api-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-nop-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/soap.jar"/>
-	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.46.0.0.jar"/>
+	<classpathentry kind="lib" path="/Users/fp200/Desktop/ScanIt/lib/sqlite-jdbc-3.46.0.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

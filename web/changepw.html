@@ -15,9 +15,9 @@
 	<title>Cambio Password</title>
 </head>
 <body class="bg-white dark:bg-gray-900">
-	<h1 class="text-3xl font-bold text-blue-600 dark:text-blue-400">Cambio Password</h1>
-	<p class="text-sm text-gray-500 dark:text-gray-400">Fornire le seguenti informazioni:</p>
-	<form name="subform" action="ChangePWServlet" method="get">
+	<form name="subform" class="mt-8 grid place-items-center" action="ChangePWServlet" method="get">
+		<h1 class="text-3xl font-bold text-blue-600 dark:text-blue-400">Cambio Password</h1>
+		<p class="text-sm text-gray-500 dark:text-gray-400">Fornire le seguenti informazioni:</p>
 		<div class="mt-4">
 			<table class="w-full text-sm text-left rtl:text-right text-blue-600 dark:text-blue-400">
 				<tr>
@@ -39,7 +39,7 @@
 		</div>
 	</form>
 	
-		<table class="text-sm text-left rtl:text-right text-blue-600 dark:text-blue-400">
+		<table class="mt-8 grid place-items-center text-sm text-left rtl:text-right text-blue-600 dark:text-blue-400">
 			<tr>
 					<td style="visibility: hidden;" class="px-6 py-3" id="otptext">Codice OTP SMS:</td>
 			
@@ -51,13 +51,13 @@
 					
 				</tr>
 		</table>
-		 <div id="equal" class="text-red-600">
+		 <div id="equal" class="grid place-items-center text-red-600">
             Le password non combaciano! 
         </div>
-        <div id="regex" class="text-red-600">
+        <div id="regex" class="grid place-items-center text-red-600">
         	La password deve essere composta da almeno almeno 8 caratteri  e contenere almeno: un carattere maiuscolo, uno minuscolo, una cifra e un carattere speciale. 
         </div>
-        <div style="visibility: hidden" id="error" class="text-red-600">
+        <div style="visibility: hidden" id="error" class="grid place-items-center text-red-600">
         	Qualcosa è andato storto... 
         </div>
 

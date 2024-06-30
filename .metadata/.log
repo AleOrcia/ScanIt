@@ -1,0 +1,26 @@
+!SESSION 2024-06-13 17:22:25.153 -----------------------------------------------
+eclipse.buildId=4.32.0.20240606-1231
+java.version=21.0.1
+java.vendor=Oracle Corporation
+BootLoader constants: OS=macosx, ARCH=aarch64, WS=cocoa, NL=it_IT
+Framework arguments:  -product org.eclipse.epp.package.jee.product -keyring /Users/fp200/.eclipse_keyring
+Command-line arguments:  -os macosx -ws cocoa -arch aarch64 -product org.eclipse.epp.package.jee.product -keyring /Users/fp200/.eclipse_keyring
+
+!ENTRY ch.qos.logback.classic 1 0 2024-06-13 17:22:35.349
+!MESSAGE Activated before the state location was initialized. Retry after the state location is initialized.
+
+!ENTRY ch.qos.logback.classic 1 0 2024-06-13 17:22:53.447
+!MESSAGE Logback config file: /Users/fp200/Desktop/ScanIt/.metadata/.plugins/org.eclipse.m2e.logback/logback.2.6.1.20240411-1122.xml
+!SESSION 2024-06-13 17:25:12.349 -----------------------------------------------
+eclipse.buildId=4.32.0.20240606-1231
+java.version=21.0.1
+java.vendor=Oracle Corporation
+BootLoader constants: OS=macosx, ARCH=aarch64, WS=cocoa, NL=it_IT
+Framework arguments:  -product org.eclipse.epp.package.jee.product -keyring /Users/fp200/.eclipse_keyring
+Command-line arguments:  -os macosx -ws cocoa -arch aarch64 -product org.eclipse.epp.package.jee.product -keyring /Users/fp200/.eclipse_keyring
+
+!ENTRY ch.qos.logback.classic 1 0 2024-06-13 17:25:14.104
+!MESSAGE Activated before the state location was initialized. Retry after the state location is initialized.
+
+!ENTRY ch.qos.logback.classic 1 0 2024-06-13 17:25:33.642
+!MESSAGE Logback config file: /Users/fp200/Desktop/ScanIt/.metadata/.plugins/org.eclipse.m2e.logback/logback.2.6.1.20240411-1122.xml

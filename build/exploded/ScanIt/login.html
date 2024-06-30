@@ -18,9 +18,9 @@
     </style>
 </head>
 <body class="bg-white dark:bg-gray-900">
-	<h1 class="text-3xl font-bold text-blue-600 dark:text-blue-400">Login</h1>
-	<p class="text-sm text-gray-500 dark:text-gray-400">Fornire le seguenti informazioni:</p>
-	<form name="subform" action="LoginServlet" method="post">
+	<form name="subform" class="mt-8 grid place-items-center" action="LoginServlet" method="post">
+		<h1 class="text-3xl font-bold text-blue-600 dark:text-blue-400">Login</h1>
+		<p class="text-sm text-gray-500 dark:text-gray-400">Fornire le seguenti informazioni:</p>
 		<div class="mt-4">
 			<table class="w-full text-sm text-left rtl:text-right text-blue-600 dark:text-blue-400">
 				<tr>
@@ -32,10 +32,10 @@
 					<td class="px-6 py-3"><input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="password" name="password" value=""/></td>
 				</tr>
 				<tr>
-					<td colspan="2"><input class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-blue-400 dark:hover:bg-blue-500 dark:focus:ring-offset-gray-800" type="submit" name="submitfield" value="Accedi"/></td>
+					<td class="py-3"><input class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-blue-400 dark:hover:bg-blue-500 dark:focus:ring-offset-gray-800" type="submit" name="submitfield" value="Accedi"/></td>
 				</tr>
 				<tr>
-					<td><a class="font-medium text-blue-600 dark:text-blue-500 hover:underline" href="changepw.html">Non ricordo la mia password!</a></td>
+					<td class="py-3"><a class="font-medium text-blue-600 dark:text-blue-500 hover:underline underline" href="changepw.html">Non ricordo la mia password!</a></td>
 				</tr>
 			</table>
 		</div>
@@ -67,5 +67,3 @@
 	</form>
 </body>
 </html>
-
-

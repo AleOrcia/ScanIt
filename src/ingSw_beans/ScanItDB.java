@@ -21,11 +21,12 @@ import java.lang.reflect.Type;
 
 
 public class ScanItDB {
-	private static final String DB_URL = "jdbc:sqlite:" + "C:\\Users\\aleor\\eclipse-workspace\\IngSW\\ScanIt\\web\\DBs\\ScanItDB.db";
+	private static final String DB_URL = "jdbc:sqlite:" + "/Users/fp200/Desktop/ScanIt/web/DBs/ScanItDB.db"
+			+ "";
 	private static ScanItDB instance = null;
     private static Connection connection;
 
-    public static ScanItDB getInstance() {
+    public synchronized static ScanItDB getInstance() {
         if (instance == null) {
             instance = new ScanItDB();
         }

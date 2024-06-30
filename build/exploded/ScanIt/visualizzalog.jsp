@@ -15,7 +15,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta http-equiv="Expires" content="-1"/>
-<title>Admin</title>
+<title>VisualizzaLog</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 <style>
@@ -54,15 +54,15 @@ LocalDate unaSettimanaFa = oggi.minusWeeks(1);
 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 %>
 
-<body class="bg-gray-900 text-white">
+<body class="bg-gray-900 bg-white">
   <div class="container mx-auto py-8">
     <div class="left-column"></div>
     <div class="right-column">
-      <h1 class="text-3xl font-bold text-blue-600 mb-8">ScanIt</h1>
+      <h1 class="grid place-items-center text-3xl font-bold text-blue-600 mb-8">ScanIt</h1>
       <div class="flex flex-wrap">
         <div class="w-full md:w-2/3 p-4">
-          <div class="article mt-4">
-            <h2 class="text-xl font-bold text-blue-600 mb-4">Visualizza Log</h2>
+          <div class="article mt-4 border-black border rounded-md">
+            <h2 class="text-xl font-bold text-blue-600 mb-4 mt-4 ml-4">Visualizza Log</h2>
             <table class="w-full text-left border-collapse bg-white text-black rounded-lg shadow-lg" id="tabellaLogs">
               <thead>
                 <tr>
