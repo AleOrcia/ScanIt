@@ -5,3 +5,30 @@ g0000|Login|Login eseguito correttamente|2024-06-22T15:50:39.050Z
 a0000|Login|Login eseguito correttamente|2024-06-24T15:37:09.037Z
 g0000|Login|Login eseguito correttamente|2024-06-24T15:37:45.037Z
 d0000|Login|Login eseguito correttamente|2024-06-24T15:38:03.038Z
+d0000|Login|Login eseguito correttamente|2024-07-16T23:19:10.019Z
+d0001|Login|Login errato|2024-07-16T23:22:14.022Z
+d0000|Login|Login errato|2024-07-16T23:22:45.022Z
+d0000|Login|Login eseguito correttamente|2024-07-16T23:23:02.023Z
+d0000|Scansione|Scansione eseguita correttamente|2024-07-16T23:23:48.023Z
+d0000|Login|Login eseguito correttamente|2024-07-16T23:26:19.026Z
+d0000|Login|Login eseguito correttamente|2024-07-16T23:27:46.027Z
+d0000|Scansione|Scansione fallita|2024-07-16T23:28:50.028Z
+a0000|Login|Login eseguito correttamente|2024-07-16T23:34:29.034Z
+a0000|Login|Login eseguito correttamente|2024-07-16T23:35:35.035Z
+a0000|Login|Login eseguito correttamente|2024-07-16T23:36:55.036Z
+a0000|Login|Login eseguito correttamente|2024-07-16T23:38:20.038Z
+a0000|Login|Login eseguito correttamente|2024-07-16T23:40:38.040Z
+g0000|Login|Login eseguito correttamente|2024-07-16T23:45:20.045Z
+d0000|Login|Login eseguito correttamente|2024-07-18T14:55:37.055Z
+d0000|Login|Login eseguito correttamente|2024-07-18T14:56:42.056Z
+d0000|Login|Login eseguito correttamente|2024-07-18T15:02:15.002Z
+g0000|Login|Login eseguito correttamente|2024-07-18T15:02:23.002Z
+d0000|Login|Login eseguito correttamente|2024-07-18T17:19:57.019Z
+d0000|Login|Login eseguito correttamente|2024-07-18T17:20:45.020Z
+a0000|Login|Login eseguito correttamente|2024-07-18T17:20:55.020Z
+d0000|Login|Login eseguito correttamente|2024-07-19T10:10:34.010Z
+d0000|Scansione|Scansione eseguita correttamente|2024-07-19T10:10:54.010Z
+a0000|Login|Login eseguito correttamente|2024-07-19T10:44:51.044Z
+a0000|Licenziamento|Dipendente d0000 licenziato correttamente|2024-07-19T10:45:18.045Z
+a0000|Nuovo ordine|Ordine o523I effettuato con successo|2024-07-19T10:46:23.046Z
+a0000|Conferma arrivo ordine|Ordine oVvGr arrivato e inventario aggiornato|2024-07-19T10:46:55.046Z
